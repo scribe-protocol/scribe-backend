@@ -14,16 +14,24 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.urls import path
-from .api_views import LoginAPI, LogoutAPI, QuestionAPI, ChatAPI, UserAnswerAPI, UserCreateAPI
+from .api_views import (
+    LoginAPI,
+    LogoutAPI,
+    QuestionAPI,
+    ChatAPI,
+    UserAnswerAPI,
+    UserCreateAPI,
+)
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/questions/', QuestionAPI.as_view(), name='question_api'),
-    path('api/chat/', ChatAPI.as_view(), name='chat_api'),
-    path('api/user_answers/', UserAnswerAPI.as_view(), name='user_answer_api'),
-    path('api/users/', UserCreateAPI.as_view(), name='user_create'),
-    path('api/login/', LoginAPI.as_view(), name='login_api'),
-    path('api/logout/', LogoutAPI.as_view(), name='logout_api'),
+    path("admin/", admin.site.urls),
+    path("api/questions/", QuestionAPI.as_view(), name="question_api"),
+    path("api/chat/", ChatAPI.as_view(), name="chat_api"),
+    path("api/user_answers/", UserAnswerAPI.as_view(), name="user_answer_api"),
+    path("api/users/", UserCreateAPI.as_view(), name="user_create"),
+    path("api/login/", LoginAPI.as_view(), name="login_api"),
+    path("api/logout/", LogoutAPI.as_view(), name="logout_api"),
 ]

@@ -4,8 +4,9 @@ from django.core.management.base import BaseCommand
 from scribe_backend.models import Question
 from django.db import transaction
 
+
 class Command(BaseCommand):
-    help = 'Populate the database with predefined questions.'
+    help = "Populate the database with predefined questions."
 
     def handle(self, *args, **kwargs):
         questions = [
@@ -108,7 +109,7 @@ class Command(BaseCommand):
             "How do you handle failure?",
             "What is your favorite memory?",
             "Do you have any phobias or fears?",
-            "What are you currently passionate about?"
+            "What are you currently passionate about?",
         ]
 
         created_count = 0
@@ -118,4 +119,8 @@ class Command(BaseCommand):
                 if created:
                     created_count += 1
 
-        self.stdout.write(self.style.SUCCESS(f"Successfully added {created_count} questions to the database."))
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Successfully added {created_count} questions to the database."
+            )
+        )
