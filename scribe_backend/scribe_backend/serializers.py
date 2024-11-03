@@ -9,9 +9,11 @@ class QuestionSerializer(serializers.ModelSerializer):
 
 
 class UserAnswerSerializer(serializers.ModelSerializer):
+    question = QuestionSerializer(read_only=True)  # Nesting the serializer
+
     class Meta:
         model = UserAnswer
-        fields = ["id", "question", "answer"]
+        fields = ["id", "question", "response"]  # 'question' now includes detailed info
 
 
 class UserSerializer(serializers.ModelSerializer):

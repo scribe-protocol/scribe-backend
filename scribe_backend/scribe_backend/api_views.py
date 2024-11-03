@@ -30,13 +30,13 @@ class UserAnswerAPI(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        for question_id, answer in request.data.items():
+        for question_id, response in request.data.items():
             if question_id.startswith("question_"):
                 question_id = question_id.split("_")[1]
                 UserAnswer.objects.update_or_create(
                     user=request.user,
                     question_id=question_id,
-                    defaults={"response": answer},  # Use 'response' instead of 'answer'
+                    defaults={"response": response},
                 )
         return Response({"status": "success"})
 
@@ -47,10 +47,11 @@ class ChatAPI(APIView):
     def post(self, request):
         user_input = request.data.get("user_input")
         context = UserAnswer.objects.filter(user=request.user).values_list(
-            "answer", flat=True
+            "response", flat=True
         )
         context_str = " ".join(context)
 
+        # Initialize OpenAI client
         client = OpenAI(api_key=api_key, project=project_id, organization=org_id)
         response = client.chat.completions.create(
             model="gpt-4o",
@@ -64,7 +65,7 @@ class ChatAPI(APIView):
             frequency_penalty=0,
             presence_penalty=0,
         )
-        return Response({"response": response.choices[0].message["content"]})
+        return Response(response.choices[0].message.content)
 
 
 class QuestionAPI(APIView):
