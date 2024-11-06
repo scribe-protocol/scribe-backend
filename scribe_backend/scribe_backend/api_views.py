@@ -46,17 +46,31 @@ class ChatAPI(APIView):
 
     def post(self, request):
         user_input = request.data.get("user_input")
-        context = UserAnswer.objects.filter(user=request.user).values_list(
-            "response", flat=True
+
+        # Format the context with questions and answers for readability
+        user_answers = UserAnswer.objects.filter(user=request.user).select_related(
+            "question"
         )
-        context_str = " ".join(context)
+        context_list = [
+            f"Q: {answer.question.question} A: {answer.response}"
+            for answer in user_answers
+        ]
+        context_str = "\n".join(context_list)
+
+        # Define the system message with instructions for the assistant
+        system_message = (
+            "You are a helpful assistant trained on a mix of general knowledge and user-specific knowledge. "
+            "You have access to the user's answers to various questions, which are structured in the format:\n\n"
+            "Q: [Question text] A: [User's answer]\n\n"
+            "Use these answers to inform your responses where relevant, adapting them to address the user's input."
+        )
 
         # Initialize OpenAI client
         client = OpenAI(api_key=api_key, project=project_id, organization=org_id)
         response = client.chat.completions.create(
             model="gpt-4o",
             messages=[
-                {"role": "system", "content": context_str},
+                {"role": "system", "content": f"{system_message}\n\n{context_str}"},
                 {"role": "user", "content": user_input},
             ],
             temperature=1,
@@ -65,6 +79,7 @@ class ChatAPI(APIView):
             frequency_penalty=0,
             presence_penalty=0,
         )
+
         return Response(response.choices[0].message.content)
 
 
