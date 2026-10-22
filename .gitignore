@@ -137,3 +137,7 @@ METADATA
 
 # Ignore the RECORD files
 RECORD
+# Local secrets
+.env
+.env.*
+!.env.example
